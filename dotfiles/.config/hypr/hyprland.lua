@@ -272,12 +272,14 @@ hl.config({
         kb_options = "",
         kb_rules   = "",
 
-        follow_mouse = 1,
+        follow_mouse = 2,
+        float_switch_override_focus = 0,
+        --mouse_refocus = false,
 
         sensitivity = 0, -- -1.0 - 1.0, 0 means no modification.
 
         touchpad = {
-            natural_scroll = false,
+            natural_scroll = true,
         },
 
 	accel_profile = "flat",
@@ -308,7 +310,7 @@ local mainMod = "SUPER" -- Sets "Windows" key as main modifier
 hl.bind(mainMod .. " + Q", hl.dsp.exec_cmd(terminal))
 local closeWindowBind = hl.bind(mainMod .. " + C", hl.dsp.window.close())
 -- closeWindowBind:set_enabled(false)
-hl.bind(mainMod .. " + SHIFT + M", hl.dsp.exec_cmd("command -v hyprshutdown >/dev/null 2>&1 && hyprshutdown || hyprctl dispatch 'hl.dsp.exit()'"))
+-- hl.bind(mainMod .. " + SHIFT + M", hl.dsp.exec_cmd("command -v hyprshutdown >/dev/null 2>&1 && hyprshutdown || hyprctl dispatch 'hl.dsp.exit()'"))
 hl.bind(mainMod .. " + L", hl.dsp.exec_cmd("loginctl lock-session")) -- 锁屏
 hl.bind(mainMod .. " + Delete", hl.dsp.exec_cmd("systemctl suspend-then-hibernate")) -- 睡眠
 hl.bind(mainMod .. " + SHIFT + Delete", hl.dsp.exec_cmd("systemctl hibernate")) -- 休眠
@@ -318,13 +320,13 @@ hl.bind(mainMod .. " + R", hl.dsp.exec_cmd(menu))
 hl.bind(mainMod .. " + P", hl.dsp.window.pseudo())
 
 -- Scrolling layout controls (https://wiki.hypr.land/Configuring/Layouts/Scrolling-Layout/)
-hl.bind(mainMod .. " + period",       hl.dsp.layout("move +col"))            -- 向右滚动一个窗口列
-hl.bind(mainMod .. " + comma",        hl.dsp.layout("move -col"))            -- 向左滚动一个窗口列
-hl.bind(mainMod .. " + SHIFT + period", hl.dsp.layout("colresize +conf"))    -- 增大当前列宽
-hl.bind(mainMod .. " + SHIFT + comma",  hl.dsp.layout("colresize -conf"))    -- 减小当前列宽
-hl.bind(mainMod .. " + F",            hl.dsp.layout("fit_into_view"))        -- 将当前列滚入视野
-hl.bind(mainMod .. " + SHIFT + J",    hl.dsp.layout("swapcol r"))            -- 当前列向右交换
-hl.bind(mainMod .. " + SHIFT + H",    hl.dsp.layout("swapcol l"))            -- 当前列向左交换
+--hl.bind(mainMod .. " + period",       hl.dsp.layout("move +col"))            -- 向右滚动一个窗口列
+--hl.bind(mainMod .. " + comma",        hl.dsp.layout("move -col"))            -- 向左滚动一个窗口列
+hl.bind(mainMod .. " + SHIFT + right", hl.dsp.layout("colresize +conf"))    -- 增大当前列宽
+hl.bind(mainMod .. " + SHIFT + left",  hl.dsp.layout("colresize -conf"))    -- 减小当前列宽
+--hl.bind(mainMod .. " + F",            hl.dsp.layout("fit_into_view"))        -- 将当前列滚入视野
+hl.bind(mainMod .. " + CONTROL + right",    hl.dsp.layout("swapcol r"))            -- 当前列向右交换
+hl.bind(mainMod .. " + CONTROL + left",    hl.dsp.layout("swapcol l"))            -- 当前列向左交换
 
 -- Move focus with mainMod + arrow keys
 hl.bind(mainMod .. " + left",  hl.dsp.focus({ direction = "left" }))
@@ -367,7 +369,7 @@ hl.bind("XF86AudioPlay",  hl.dsp.exec_cmd("playerctl play-pause"), { locked = tr
 hl.bind("XF86AudioPrev",  hl.dsp.exec_cmd("playerctl previous"),   { locked = true })
 
 hl.bind(mainMod .. " + F12", hl.dsp.exec_cmd("pkill waybar || true && waybar"))
-hl.bind(mainMod .. " + F", hl.dsp.exec_cmd("mark-shot"))
+hl.bind(mainMod .. " + F1", hl.dsp.exec_cmd("mark-shot"))
 
 
 --------------------------------
