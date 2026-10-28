@@ -1,0 +1,182 @@
+{
+  //电池（仅笔记本存在电池设备时显示，台式机自动隐藏）
+  "custom/battery": {
+    "exec": "~/.config/waybar/scripts/battery.sh",
+    "exec-if": "ls /sys/class/power_supply 2>/dev/null | grep -q '^BAT'",
+    "return-type": "json",
+    "interval": 60,
+  },
+  //屏幕亮度（仅笔记本存在背光设备时显示，台式机自动隐藏）
+  "custom/backlight": {
+    "exec": "~/.config/waybar/scripts/backlight.sh",
+    "exec-if": "ls /sys/class/backlight 2>/dev/null | grep -q .",
+    "return-type": "json",
+    "interval": 5,
+    "signal": 9,
+    "format": "{}",
+    "on-scroll-up": "~/.config/waybar/scripts/backlight-adjust.sh up",
+    "on-scroll-down": "~/.config/waybar/scripts/backlight-adjust.sh down",
+  },
+  //电源模式（性能 / 均衡 / 省电，点击循环切换）
+  "power-profiles-daemon": {
+    "format": "{icon}",
+    "tooltip-format": "电源模式：{profile}\n驱动：{driver}\n---\n左键：切换模式",
+    "format-icons": {
+      "default": "󱐋",
+      "performance": "󱐋",
+      "balanced": "󰓅",
+      "power-saver": "󰌪",
+    },
+  },
+  //时钟与日期
+  "clock": {
+    "interval": 60,
+    "format": "{:%A %m/%d  %H:%M}",
+    "tooltip-format": "{:%Y/%m/%d %A}\n---\n左键：打开时钟\n右键：打开日历",
+    "max-length": 25,
+    "on-click": "gnome-clocks",
+    "on-click-right": "gnome-calendar",
+  },
+  //工作区指示器（数字标记）
+  "hyprland/workspaces": {
+    "format": "{id}",
+    "sort-by": "number",
+  },
+  //系统托盘
+  "tray": {
+    "icon-size": 22,
+    "spacing": 7,
+  },
+  //正在播放（Now Playing）
+  "mpris": {
+    "interval": 2,
+    "format": "{player_icon} {dynamic}",
+    "format-paused": "{status_icon} {dynamic}",
+    "player-icons": {
+      "default": "",
+      "firefox": "",
+      "spotify": "",
+      "mpv": "󰐃",
+      "vlc": "",
+    },
+    "status-icons": {
+      "playing": "",
+      "paused": "",
+      "stopped": "",
+    },
+    "tooltip-format": "{player}：{title}\n---\n左键：播放/暂停\n右键：下一曲\n中键：上一曲",
+    "max-length": 26,
+    "on-click": "playerctl play-pause",
+    "on-click-right": "playerctl next",
+    "on-click-middle": "playerctl previous",
+  },
+  //无媒体占位（有媒体时自动隐藏，交还给 mpris 模块显示）
+  "custom/media": {
+    "exec": "~/.config/waybar/scripts/media.sh",
+    "interval": 2,
+    "tooltip": false,
+  },
+  //通知中心指示器
+  "custom/notifications": {
+    "exec": "~/.config/waybar/scripts/notifications.sh",
+    "return-type": "json",
+    "interval": 5,
+    "signal": 9,
+    "format": "{}",
+    "on-click": "~/.config/waybar/scripts/notifications-center.sh",
+  },
+  //当前窗口（任务视图）
+  "hyprland/window": {
+    "format": "{}",
+    "max-length": 120,
+    "separate-outputs": true,
+    "rewrite": {
+      "(.*) - Zen Browser": "🌎 $1",
+      "(.*) - zsh": "> [$1]",
+    },
+  },
+  //网络
+  "network": {
+    "format-disconnected": "{icon}",
+    "format-wifi": "{icon}",
+    "format-ethernet": "{icon}",
+    "format-icons": {
+      "disconnected": "󰤮",
+      "wifi": ["󰤯", "󰤟", "󰤢", "󰤥", "󰤨"],
+      "ethernet": "󰈀",
+    },
+    "tooltip-format-wifi": "{essid} ({signalStrength}%)\n{ifname} : {ipaddr}\n---\n左键：打开面板\n右键：打开高级网络配置工具",
+    "tooltip-format-ethernet": "{ifname} : {ipaddr}\n---\n左键：打开面板\n右键：打开高级网络配置工具",
+    "tooltip-format-disconnected": "网络未连接\n---\n左键：打开面板\n右键：打开高级网络配置工具",
+    "on-click": "kitty --class network-tui -e ~/.config/waybar/scripts/select-network-tui.sh",
+    "on-click-right": "nm-connection-editor",
+  },
+  "bluetooth": {
+    "format-disabled": "󰂲",
+    "tooltip-format-disabled": "右键：启用蓝牙",
+    "format": "󰂯",
+    "tooltip-format-on": "左键：打开面板\n右键：禁用蓝牙",
+    "format-connected": "󰂱",
+    "tooltip-format-connected": "󰂱 {device_alias}\n---\n左键：打开面板",
+    "on-click-right": "~/.config/waybar/scripts/toggle-bluetooth.sh",
+    "on-click": "kitty --class bluetui -e bluetui",
+  },
+  //网络+蓝牙：折叠在横向抽屉里，悬浮展开（Win11 风格）
+  "group/network": {
+    "orientation": "inherit",
+    "drawer": {
+      "transition-left-to-right": false,
+    },
+    "modules": ["network", "bluetooth"],
+  },
+  //系统：通知/背光/电池/电源模式折叠进抽屉，悬浮横向展开
+  "group/status": {
+    "orientation": "inherit",
+    "drawer": {
+      "transition-left-to-right": false,
+    },
+    "modules": ["custom/notifications", "custom/backlight", "custom/battery", "power-profiles-daemon"],
+  },
+  //声音：折叠进 group/audio 抽屉，悬浮展示音量滑条（不含麦克风音量）
+  "pulseaudio": {
+    "tooltip-format": "左键：静音\n中键：打开面板",
+    "format": "{icon}",
+    "format-icons": {
+      "headphone": "",
+      "headset": "",
+      "bluetooth": "",
+      "speaker": ["", "", ""],
+    },
+    "on-click": "wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle",
+    "on-click-middle": "pavucontrol",
+    "on-scroll-up": "wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%+",
+    "on-scroll-down": "wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-",
+  },
+  //音量滑条（group/audio 抽屉展开时显示）
+  "pulseaudio/slider": {
+    "min": 0,
+    "max": 100,
+    "orientation": "horizontal",
+  },
+  //声音+滑条：折叠进抽屉，悬浮横向展开
+  "group/audio": {
+    "orientation": "inherit",
+    "drawer": {
+      "transition-left-to-right": false,
+    },
+    "modules": ["pulseaudio", "pulseaudio/slider"],
+  },
+  //应用图标占位符（折叠托盘时显示，悬浮展开显示真实应用图标）
+  "custom/apps": {
+    "format": "󰁍",
+    "tooltip": false,
+  },
+  //托盘应用图标：折叠为占位符，悬浮横向展开
+  "group/apps": {
+    "orientation": "inherit",
+    "drawer": {
+      "transition-left-to-right": false,
+    },
+    "modules": ["custom/apps", "tray"],
+  },
+}

@@ -1,0 +1,251 @@
+@import "colors.css";
+
+/* 基准字体大小：所有 em 均基于此缩放 */
+* {
+    border: none;
+    border-radius: 8px;
+    font-family: "JetBrainsMono NFM", "JetBrainsMono Nerd Font Mono", "Noto Sans Mono", "Font Awesome 7 Free";
+    font-size: 13px; /* 1em（基准） */
+    font-weight: 400;
+    min-height: 0;
+}
+
+/* ========== 任务栏整体：毛玻璃（半透明） ==========
+   background 使用半透明深色 + 由 hyprland 的 decoration.blur
+   在背后实时模糊壁纸，形成 Win11 的 Acrylic 效果。
+   注意：真正的模糊需要 hyprland 配置中的 decoration.blur，见 hyprland.lua。 */
+window#waybar {
+    border-radius: 0px;
+    background: rgba(18, 20, 24, 0.65);
+    color: @on_surface;
+    box-shadow: none;
+}
+
+tooltip {
+    background: rgba(39, 42, 47, 0.92);
+    border: 1px solid rgba(255, 255, 255, 0.10);
+    border-radius: 10px;
+    opacity: 1;
+}
+
+tooltip label {
+    color: @on_surface;
+    font-size: 0.89em;
+}
+
+/* ========== 元素镂空：默认透明，仅显示图标/文字 ========== */
+#window,
+#tray,
+#network,
+#bluetooth,
+#pulseaudio,
+#clock,
+#custom-notifications,
+#custom-battery,
+#custom-backlight,
+#mpris,
+#custom-media,
+#power-profiles-daemon {
+    background: transparent;
+    color: @on_surface;
+    padding: 0px 7px;
+    margin: 0px 0px;
+    border-radius: 0px;
+    transition: background-color 0.15s ease-in-out;
+}
+
+/* 悬浮：出现半透明白色高亮药丸 */
+#window:hover,
+#network:hover,
+#bluetooth:hover,
+#pulseaudio:hover,
+#clock:hover,
+#custom-notifications:hover,
+#custom-battery:hover,
+#custom-backlight:hover,
+#mpris:hover,
+#custom-media:hover,
+#power-profiles-daemon:hover {
+    background: rgba(255, 255, 255, 0.10);
+    border-radius: 6px;
+}
+
+/* 工作区指示器（数字 + 底部强调条） */
+#workspaces {
+    background: transparent;
+    padding: 0px 3px;
+    margin: 0px 3px 0px 2px;
+    font-weight: 700;
+}
+
+#workspaces button {
+    background: transparent;
+    color: @on_surface_variant;
+    padding: 0px 6px;
+    margin: 0px 1px;
+    border: none;
+    border-bottom: 2px solid transparent;
+    min-height: 0px;
+    border-radius: 0px;
+    font-size: 0.9em;
+    font-weight: 600;
+    transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out,
+        border-bottom-color 0.15s ease-in-out;
+}
+
+#workspaces button:hover {
+    background: rgba(255, 255, 255, 0.10);
+    color: @on_surface;
+    border-radius: 6px;
+}
+
+#workspaces button.active {
+    color: @primary;
+    background: transparent;
+    border-bottom-color: @primary;
+}
+
+/* 当前窗口 / 任务视图 */
+#window {
+    padding: 0px 11px;
+}
+
+#window label {
+    font-size: 1.0em;
+}
+
+window#waybar.empty #window {
+    background: transparent;
+}
+
+/* 通知指示器 */
+#custom-notifications {
+    font-size: 1.05em;
+    padding: 0px 7px;
+}
+
+#custom-notifications.has-notifications {
+    color: @primary;
+}
+
+/* 正在播放 */
+#mpris,
+#custom-media {
+    padding: 0px 9px;
+    font-size: 0.95em;
+}
+
+#mpris label {
+    font-size: 0.9em;
+}
+
+/* 系统托盘和状态项 */
+#tray {
+    padding: 0px 6px;
+}
+
+#network {
+    font-size: 1.4em;
+    padding: 0px 4px;
+}
+
+#bluetooth {
+    font-size: 1.13em;
+    padding: 0px 4px;
+}
+
+#pulseaudio {
+    font-size: 1.0em;
+    padding: 0px 8px;
+}
+
+#power-profiles-daemon {
+    font-size: 1.0em;
+    padding: 0px 6px;
+}
+
+#custom-battery,
+#custom-backlight {
+    font-size: 1.04em;
+    padding: 0px 6px;
+}
+
+#clock {
+    font-size: 1.04em;
+    padding: 0px 10px;
+}
+
+#custom-battery.critical:not(.charging) {
+    color: @error;
+    animation-name: blink;
+    animation-duration: 0.5s;
+    animation-timing-function: steps(12);
+    animation-iteration-count: infinite;
+    animation-direction: alternate;
+}
+
+@keyframes blink {
+    to {
+        color: @error;
+    }
+}
+
+/* ========== 分组抽屉（Win11 风格横向折叠） ========== */
+/* 组内容器透明，仅保留内部模块各自的悬浮高亮 */
+#group-network,
+#group-status,
+#group-audio,
+#group-apps {
+    background: transparent;
+    margin: 0px 0px;
+    border-radius: 0px;
+}
+
+/* 抽屉内子模块统一透明背景（悬浮时仍各自高亮） */
+#group-network.drawer-child,
+#group-status.drawer-child,
+#group-audio.drawer-child,
+#group-apps.drawer-child,
+#group-network #network,
+#group-network #bluetooth,
+#group-status #custom-notifications,
+#group-status #custom-backlight,
+#group-status #custom-battery,
+#group-status #power-profiles-daemon,
+#group-audio #pulseaudio,
+#group-audio #pulseaudio-slider,
+#group-apps #tray,
+#group-apps #custom-apps {
+    background: transparent;
+}
+
+/* 托盘应用图标折叠占位符（网格/应用图标） */
+#custom-apps {
+    font-size: 1.15em;
+    padding: 0px 4px;
+    color: @on_surface_variant;
+}
+
+/* 音量滑条（抽屉内） */
+#pulseaudio-slider {
+    padding: 0px 8px;
+}
+#pulseaudio-slider trough {
+    min-height: 8px;
+    min-width: 70px;
+    border-radius: 4px;
+    background-color: rgba(255, 255, 255, 0.12);
+}
+#pulseaudio-slider highlight {
+    border-radius: 4px;
+    background-color: @primary;
+}
+#pulseaudio-slider slider {
+    min-height: 0px;
+    min-width: 0px;
+    opacity: 0;
+    background-image: none;
+    border: none;
+    box-shadow: none;
+    background: none;
+}
